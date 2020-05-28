@@ -18,5 +18,5 @@ NodeJS Server agregating different consumer-product APIs to a single http-interf
 
 
 # Sources
-VSX-922: https://raymondjulin.com/blog/remote-control-your-pioneer-vsx-receiver-over-telnet/
-TOSHIBA: https://shkspr.mobi/blog/2018/11/telnet-control-of-toshiba-smart-tvs/
+- VSX-922: https://raymondjulin.com/blog/remote-control-your-pioneer-vsx-receiver-over-telnet/
+- TOSHIBA: https://shkspr.mobi/blog/2018/11/telnet-control-of-toshiba-smart-tvs/
