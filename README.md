@@ -1,9 +1,9 @@
 # HomeControl4Smarties
-NodeJS Server agreating different Consumer-product APIs to a single http-interface
+NodeJS Server agregating different consumer-product APIs to a single http-interface
 
 
 # Idea
-Building Modules for the following devices, which can (hopefully) be controlled directly by network comands or Bluetooth.
+1. Building Modules for the following devices, which can (hopefully) be controlled directly by network comands or Bluetooth.
 
 | Device               | type                        | interface          |
 |----------------------|-----------------------------|--------------------|
@@ -11,4 +11,10 @@ Building Modules for the following devices, which can (hopefully) be controlled 
 | TOSHIBA 55V6763DAL   | Television                  | ??                 |
 | Boho Office Easydesk | height adjustment for table | Bluetooth          |
 | Philipps Hue         | Smart Lights                | Restful API/  JSON |
-|                      |                             |                    |
+| Windows 10(lock, CPU)| PC                          | ?? REST API        |
+
+2. Building a Web-Interfac and Android (cross-plattform) App
+
+
+
+# Sources
