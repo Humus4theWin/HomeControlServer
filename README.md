@@ -32,6 +32,7 @@ And all that, even if some devices are already turned on ;)
 # Sources
 - VSX-922: https://raymondjulin.com/blog/remote-control-your-pioneer-vsx-receiver-over-telnet/
 - TOSHIBA: https://shkspr.mobi/blog/2018/11/telnet-control-of-toshiba-smart-tvs/
+          https://github.com/T3m3z/pyvesteltv/blob/master/pyvesteltv/broadcast.py
 
 # Similar Projects
 - https://github.com/stormboy/node-pioneer-avr/blob/master/pioneer-avr.js
