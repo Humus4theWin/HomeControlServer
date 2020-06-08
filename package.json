@@ -1,0 +1,27 @@
+{
+  "name": "homecontrol4smarties",
+  "version": "1.0.0",
+  "description": "NodeJS Server agregating different consumer-product APIs to a single http-interface",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Humus4theWin/HomeControl4Smarties.git"
+  },
+  "keywords": [
+    "SmartHome"
+  ],
+  "author": "Linus Pfoch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Humus4theWin/HomeControl4Smarties/issues"
+  },
+  "homepage": "https://github.com/Humus4theWin/HomeControl4Smarties#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "openpromise": "^2.2.1",
+    "ws": "^7.3.0"
+  }
+}

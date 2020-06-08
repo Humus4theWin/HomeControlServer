@@ -1,0 +1,174 @@
+# send data:
+POST: http://192.168.188.41:56789/apps/SmartCenter
+BODY:<?xml version='1.0' ?><remote><key code='1056'/></remote>
+
+# get data:
+
+POST: http://192.168.188.41:56789/apps/SmartCenter
+BODY: <command>volume</command>
+
+# start APP
+POST:http://192.168.188.41:56789/apps/Netflix
+(close app before open new
+POST:http://192.168.188.41:56789/apps/Youtube
+
+mit get, bekommt man die Info, ob die App gerade läuft
+
+view Response here (execute in Browser console):
+var TV = new WebSocket("ws://192.168.188.41:7681/")
+TV.onmessage = function (event) { console.log(event.data); }
+
+
+
+# Tosiba APP Shared Prefs
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="SAVED_TV_BROWSER_TYPE" value="1" />
+    <string name="SAVED_TV_IP_ADDRESS">192.168.188.41</string>
+    <boolean name="SAVED_TV_IS_3D_ACTIVE" value="false" />
+    <string name="SAVED_TV_APPS_URL">http://192.168.188.41:56789/apps/</string>
+    <string name="SAVED_DIAL_VERSION">2.0</string>
+    <string name="SAVED_TV_VERSION">MB100</string>
+    <string name="SAVED_TV_NAME">TOSHIBA</string>
+    <string name="tvAddress">70:54:B4:0C:11:E0</string>
+    <int name="SAVED_TV_SOFTWARE_VERSION_CODE" value="2362351" />
+</map>
+
+## How to get
+Entwickler-optionen -> root shell
+adb root
+adb shell
+cd /data/data/run-as com.toshiba.SmartRemote [...]
+
+
+# decompile app with jadx, find class:
+MB100v2CommandSender !!!
+
+"<?xml version='1.0' ?><remote><key code='%s'/></remote>"
+"<?xml version=\"1.0\" ?><remote><key code=\"%s\"/></remote>"
+
+
+
+package com.vestel.supertvcommunicator;
+
+# Buttons
+
+HOME, "1046");
+POWER, "1012");
+POWER_NAV, "1012");
+POWER_PLAYER, "1012");
+POWER_PVM, "1012");
+POWER_GES_NAV, "1012");
+POWER_GES_PLAYER, "1012");
+POWER_GES_PVM, "1012");
+RECORD, "1051");
+PLAY, "1025");
+PAUSE, "1049");
+STOP, "1024");
+PREVIOUS, "1034");
+REWIND, "1027");
+FORWARD, "1028");
+NEXT, "1255");
+SCREEN, "1011");
+LANG, "1015");
+SUBTITLE, "1031");
+PRESETS, "1014");
+EPG, "1047");
+TEXT, "1255");
+FAV, "1040");
+3D, "1040");
+SLEEP, "1042");
+0, "1000");
+1, "1001");
+2, "1002");
+3, "1003");
+4, "1004");
+5, "1005");
+6, "1006");
+7, "1007");
+8, "1008");
+9, "1009");
+"48", "48");
+"49", "49");
+"50", "50");
+"51", "51");
+"52", "52");
+"53", "53");
+"54", "54");
+"55", "55");
+"56", "56");
+"57", "57");
+MENU, "1048");
+MUTE, "1013");
+UP, "1020");
+LEFT, "1021");
+OK, "1053");
+RIGHT, "1022");
+DOWN, "1019");
+VOL_UP, "1016");
+VOL_DOWN, "1017");
+VOL_UP_2, "1016");
+VOL_DOWN_2, "1017");
+PROG_UP, "1032");
+PROG_DOWN, "1033");
+BACK, "1010");
+EXIT, "1037");
+RED, "1055");
+GREEN, "1054");
+YELLOW, "1050");
+BLUE, "1052");
+INFO, "1018");
+MMEDIA, "1057");
+SOURCE, "1056");
+SWAP, "1034");
+CHAN, "1045");
+QMENU, "1043");
+KEYBOARD_BACKSPACE", "8");
+KEYBOARD_NEW_LINE", "10");
+
+
+# other comands on /SmartCenter
+<command>activechannellist</command>
+<command>specialportalapps</command>
+<command>volume</command>
+<command>program</command>
+<command>timerlist</command>
+<command>tvstate</command>
+<command>volume</command>
+<command>volume</command>
+<command>tvstate</command>		!!
+
+
+
+# other comands on 
+/SmartCenter??
+"<?xml version=\"1.0\" ?><keyboard><key value='%s'/></keyboard>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
