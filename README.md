@@ -27,6 +27,22 @@ And all that, even if some devices are already turned on ;)
 
 2. Building a Web-Interfac and Android (or cross-plattform) App.
 
+# Architektur
+Jedes Gerät wird durch ein  Modul abstrahiert.
+## State
+Jedes Modul hält den aktuellen status aller relevanten Eigenschaften des Geräts bereit.
+
+## Event (=der State eines Moduls hat sich geändert)
+Jedes Modul stellt Änderung des Status in Form eines Callbacks als Event für andere Komponenten zur Verfügung.
+
+## Order (=der State eines Moduls soll sich ändern)
+Jedes Modul kann einen vorgegebenen Status herstellen. Es abstrahiert damit die gerätespezifischen Eigenschaften (timings, calls, reihenfolge...)
+
+## Regel 
+* input: Event + State
+* output: Order
+Eine Regel definiert einen Order in Abhängigkeit des aktuellen States und wird duch einen Event ausgelöst.
+Jeder Event wird auf alle Regeln gemapt, die 
 
 
 # Sources
