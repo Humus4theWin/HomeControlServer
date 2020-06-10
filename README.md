@@ -42,7 +42,8 @@ Jedes Modul kann einen vorgegebenen Status herstellen. Es abstrahiert damit die 
 * input: Event + State
 * output: Order
 Eine Regel definiert einen Order in Abhängigkeit des aktuellen States und wird duch einen Event ausgelöst.
-Jeder Event wird auf alle Regeln gemapt, die 
+Jeder Event wird auf alle Regeln gemapt, die es auslösen kann. 
+Regeln werden nach Abschluss aller laufenden externen Events geprüft (?)
 
 
 # Sources
