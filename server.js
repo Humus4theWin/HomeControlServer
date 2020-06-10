@@ -1,19 +1,37 @@
 const vsx = require('./vsx')
-let state ={};
+let globalState ={};
 
-function onVSXChanged(state){
-    console.log(state)
-    state.vsx = state
+globalState.vsx = vsx.getState();
+let vsxCB = {}
+
+vsxCB.onPowerOn = function(){
+    console.log("onPowerOn")
+}
+vsxCB.onPowerOff =function(){
+    console.log(globalState)
+}
+vsxCB.onMCACC =function(){
+    console.log(globalState)
+}
+vsxCB.onVol = function(){
+    console.log(globalState)
+}
+vsxCB.onChannel =function(){
+    console.log(globalState)
 }
 
-vsx.connect();
-vsx.registerCallback(
-   function() {
-        //console.log(state)
-        state.vsx = state
-    }
-);
 
-setTimeout(
-    function(){ vsx.send(["6MC","25FN"])
-},3000)
+
+vsx.registerCallbacks(vsxCB)
+vsx.start();
+
+
+setTimeout(()=> {
+    vsx.assureState({
+        power: true,
+        mcacc: globalState.vsx.mcacc.values.PC,
+        volume: 60,
+        input: globalState.vsx.input.values.Chromecast
+    })
+
+},2000)

@@ -14,8 +14,8 @@ let connected,
             power:{
                 type:"selectMap",
                 values:{
-                    An:"PO",
-                    Aus:"PF",
+                    false:"PO",
+                    true:"PF",
                 },
                 state: undefined
             },
@@ -32,8 +32,8 @@ let connected,
                     TV:"15FN",
                     PC:"05FN",
                     Vinyl:"01FN",
-                    PS4:"06FN",
-                    PS3:"20FN",
+                    PS3:"06FN",
+                    PS4:"20FN",
                 },
                 state:undefined
             },
@@ -47,7 +47,7 @@ let connected,
             }
     }
     
-    let connect = function(options) {
+    let connect = function() {
         var self = this;
         client = net.connect(options);
     
@@ -64,15 +64,29 @@ let connected,
         client.on("end", function() {
             console.log("disconnected");
             connected=false;
-            let client = connect(options);
+            connect();
+        });
+        client.on("close", function() {
+            console.log("close");
+            connected=false;
+            connect();
+        });
+
+        client.on("timeout", function() {
+            console.log("timeout");
+            connected=false;
+            connect();
         });
     
         client.on("error", function(err) {
-            console.log( err);
-            let client = connect(options);
+            console.log(err);
+            let client = connect();
+            connected=false;
+            setTimeout(()=> {
+                console.log("try reconnect VSX");
+                connect();
+            },10000);
         });
-    
-        return client;
     };
 
 
@@ -81,34 +95,38 @@ let recData = function(buffer){
     var length = data.lastIndexOf('\r');
     data = data.substr(0, length);
     data = data.split("\n")
-    console.log(data)
+    //console.log(data)
 
-    //process data
-    let hasChanged = data.map((e) =>{
-        if(e.startsWith("PWR0"))
-            state.power.state="PO"
-        else if (e.startsWith("PWR1"))
-            state.power.state="PF"
-        
-        else if (e.startsWith("MC"))
-            state.mcacc.state=e.substr(2,1)+"MC"
-        
-        else if (e.startsWith("VOL"))
-            state.volume.state= parseInt(e.substr(3,3))
-        
-        else if (e.startsWith("FN"))
-            state.input.state=e.substr(2,2)+"FN"
+    //process call -> update state, call callbacks
+    let hasChanged = data.forEach((e) =>{
+        if(e.startsWith("PWR0"&&state.power.state!==true)){
+            state.power.state=true;
+            callbackFunctions.onPowerOn();
+        }
+        else if (e.startsWith("PWR1")&&state.power.state!==false){
+            state.power.state=false;
+            callbackFunctions.onPowerOff();
+        }
+
+        else if (e.startsWith("MC")){
+            state.mcacc.state=e.substr(2,1)+"MC";
+            callbackFunctions.onMCACC();
+        }
+            
+        else if (e.startsWith("VOL")){
+            state.volume.state= parseInt(e.substr(3,3));
+            callbackFunctions.onVol();
+        }
+            
+        else if (e.startsWith("FN")){
+            state.input.state=e.substr(2,2)+"FN";
+            callbackFunctions.onChannel();
+        }
         else
             return false;
 
         return true;
-    }).find(e => e)!==undefined;
-
-
-    //data changed?
-    if(hasChanged&&callbackFunction!==undefined){
-        callbackFunction(state)
-    }
+    })
 }
 let reqData = function(){
     client.write("?P\r");
@@ -119,30 +137,56 @@ let reqData = function(){
     //sendData(["5MC","15FN"])
 }
 
-let sendData = function(commandArr){
-    if(commandArr.length===0) return;
+let sendData = function(stateChanges){
+    console.log(stateChanges)
+    if(stateChanges.power!=undefined){
+        client.write(stateChanges.power?"PO\r":"PF\r")
+        stateChanges.power= undefined;
+         return setTimeout(sendData,2000,stateChanges)
+    }
+    else if(stateChanges.volume!=undefined){
+        let volStr = "" + stateChanges.volume;
+        if(volStr.length===1)
+            volStr = "00" + volStr;
+        else if(volStr.length===2)
+            volStr = "0" + volStr;
 
-    console.log(commandArr)
-    if(commandArr[0]!=="PF"&&state.power.state!=="PO"){
-        client.write("PO\r")
-        if(commandArr[0]==="PO")
-            commandArr.splice(0,1)
-        setTimeout(sendData,1000,commandArr)
-        setTimeout(reqData,2000)
+        volStr+="vl"
+        client.write(volStr + "\r");
+        stateChanges.volume=undefined;
+        return sendData(stateChanges)
+    }
+    else if(stateChanges.input!=undefined){
+        client.write(stateChanges.input + "\r");
+        stateChanges.input=undefined;
+        return sendData(stateChanges)
+    }
+    else if(stateChanges.mcacc!=undefined){
+        client.write(stateChanges.mcacc + "\r");
+        stateChanges.mcacc=undefined;
+        return sendData(stateChanges)
     }else{
-        client.write(commandArr[0]+"\r");
-        commandArr.splice(0,1)
-        sendData(commandArr)
+        return;
     }
 }
 
-let callbackFunction;
-exports.connect = () => {  
-    connect(options);
+
+
+exports.getState = () => {  
+    return state;
 }
-exports.registerCallback = (fkt) => {  
-    callbackFunction = fkt;
+
+let callbackFunctions = {};
+exports.registerCallbacks = (cbFkts) => {  
+    callbackFunctions = cbFkts;
 }
-exports.send = (commandArr) => {  
-    sendData(commandArr);
+exports.assureState = (stateChanges) => {  
+    console.log("VSX-change state: " + JSON.stringify(stateChanges));
+    sendData(stateChanges);
+    
 }
+
+exports.start = () => {  
+    connect();
+}
+//startConnection
