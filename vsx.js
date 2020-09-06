@@ -52,7 +52,7 @@ let connected,
         client = net.connect(options);
     
         client.on("connect", function(socket) {
-            console.log("connected");
+            console.log("VSX connected");
             connected=true;
             setTimeout(reqData, 200);
         });
@@ -62,18 +62,18 @@ let connected,
         });
     
         client.on("end", function() {
-            console.log("disconnected");
+            console.log("VSX disconnected");
             connected=false;
             connect();
         });
         client.on("close", function() {
-            console.log("close");
+            console.log("VSX close");
             connected=false;
             connect();
         });
 
         client.on("timeout", function() {
-            console.log("timeout");
+            console.log("VSX timeout");
             connected=false;
             connect();
         });
@@ -83,7 +83,7 @@ let connected,
             let client = connect();
             connected=false;
             setTimeout(()=> {
-                console.log("try reconnect VSX");
+                console.log("VSX try reconnect");
                 connect();
             },10000);
         });
