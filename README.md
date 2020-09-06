@@ -35,7 +35,7 @@ Jedes Modul hält den aktuellen status aller relevanten Eigenschaften des Gerät
 ## Event (=der State eines Moduls hat sich geändert)
 Jedes Modul stellt Änderung des Status in Form eines Callbacks als Event für andere Komponenten zur Verfügung.
 
-## Order (=der State eines Moduls soll sich ändern)
+## Assure (=der State eines Moduls soll sich ändern)
 Jedes Modul kann einen vorgegebenen Status herstellen. Es abstrahiert damit die gerätespezifischen Eigenschaften (timings, calls, reihenfolge...)
 
 ## Regel 
