@@ -60,10 +60,17 @@ function restoreState(scene){
     axios.put("http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/groups/1/action",state.groups.Zimmer.state)
 }
 
-activateScene(state.scenes.Hell)
+//activateScene(state.scenes.Hell)
 
-setInterval(getRoomState,500)
+//setInterval(getRoomState,500)
 
 function getPowerStatus(){
     axios.get("http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/groups/1/").then((res)=> state.groups.Zimmer.state=res.data.action)
+}
+
+
+
+exports.turnSub = (powerState) => {  
+    let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/lights/30/state"
+    axios.put(SWURL, {"on":powerState})
 }

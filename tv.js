@@ -29,7 +29,15 @@ let connect = function() {
   ws.on('message', function incoming(data) {
     console.log(data);
     recData(data)
+  }); 
+
+  ws.on('error', function retry() {
+    console.log("reconnect TV");
+    ws.close();
+    ws.terminate();
+    connect();
   });
+
   //todo get initial state
   setInterval(sendStatusRequest,5000);
 }
@@ -61,7 +69,7 @@ let recData = function(line){
     callbackFunctions.onYoutubeOff();
   }
 
-  //my be netflix
+  //may be netflix
   if(line.includes("tv_state value='OTHER'")){
     axios.get(REST_URL+"/"+"Netflix").then((res) => {
       if(res.data.toString().includes("<state>running</state>")){
