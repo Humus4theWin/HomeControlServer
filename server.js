@@ -29,7 +29,7 @@ vsxCB.onVol = function(){
     console.log(globalState)
 }
 vsxCB.onChannel =function(){
-    console.log(globalState)
+   
 }
 
 let tvCB = {};
@@ -111,7 +111,23 @@ app.get('/vsx_vol_up', (req, res) => {
     res.send('ok')
 })
 
+app.get('/vsx_mcacc_bett', (req, res) => {
+    
+    vsx.assureState({
+        mcacc: 'BETT',
+        
+    })
 
+    res.send('ok')
+})
+app.get('/vsx_mcacc_pc', (req, res) => {
+    
+    vsx.assureState({
+        mcacc: 'PC',
+    })
+
+    res.send('ok')
+})
 
 app.listen(port, () => {
 console.log(`Example app listening at http://localhost:${port}`)
