@@ -16,18 +16,22 @@ var stateDescr = {
     },
     volume:[000,185],
     input:{
-        Chromecast:"04FN",
-        Lenovo:"25FN",
-        TV:"15FN",
-        PC:"05FN",
-        Vinyl:"01FN",
+        Chromecast:"21FN",
+        Dock:"25FN",
+        BT:"15FN",
+        PC:"01FN",
+        TV:"05FN",
         PS3:"06FN",
-        PS4:"20FN",
+        PS4:"04FN",
         
     },
     mcacc:{
         PC:"5MC",
         Bett:"6MC"
+    },
+    zone2_power:{
+            on:"APO",
+            off:"APF"
     }
 }
 
@@ -36,6 +40,7 @@ var state = {
     volume: undefined,
     input: undefined,
     mcacc: undefined,
+    zone2_power: undefined,
 }
 
 let connectToService = function() {
@@ -107,6 +112,12 @@ let recData = function(buffer){
             let val = e.substr(2,2)+"FN";
             state.input = getByValue(stateDescr.input, val)
             callbackFunctions.onChannel();
+        } 
+        
+        else if (e.startsWith("APR")){
+            let val = "AP" + (e.substr(3,1)==1)?'F':'O';
+            state.zone2_power = getByValue(stateDescr.input, val)
+            callbackFunctions.onChannel();
         }
     })
 }
@@ -116,6 +127,7 @@ let requestData = function(){
     client.write("?V\r");
     client.write("?F\r");
     client.write("?MC\r");
+    client.write("?BP\r");
 }
 
 let sendData = function(stateChanges){
@@ -145,6 +157,11 @@ let sendData = function(stateChanges){
     else if(stateChanges.mcacc!=undefined){
         client.write(stateDescr.mcacc[stateChanges.mcacc]+ "\r");
         stateChanges.mcacc=undefined;
+        return sendData(stateChanges)
+    }else if(stateChanges.zone2_power!=undefined){
+        client.write('76ZV'+ "\r");
+        client.write(stateDescr.zone2_power[stateChanges.zone2_power]+ "\r");
+        stateChanges.zone2_power=undefined;
         return sendData(stateChanges)
     }else{
         return;

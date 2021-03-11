@@ -15,10 +15,23 @@ let vsxCB = {}
 vsxCB.onPowerOn = function(){
     hue.turnSub(true)
 
+    setTimeout(function(){
+        vsx.assureState({
+            zone2_power:'on'
+        }),2000
+    })
+
     console.log("onPowerOn")
 }
 vsxCB.onPowerOff =function(){
     hue.turnSub(false)
+
+    setTimeout(function(){
+        vsx.assureState({
+            zone2_power:'off'
+        }), 2000
+    })
+
 
     console.log(globalState)
 }
@@ -29,12 +42,14 @@ vsxCB.onVol = function(){
     console.log(globalState)
 }
 vsxCB.onChannel =function(){
-   
+    console.log(globalState)
 }
 
 let tvCB = {};
 tvCB.onPowerOn = function(){
     console.log("TV on")
+
+
 }
 tvCB.onPowerOff =function(){
     console.log("TV off")
@@ -75,15 +90,15 @@ tvCB.onYoutubeOff =function(){
     console.log("onYoutubeOff")
 }
 
-tv.registerCallbacks(tvCB)
-tv.start();
+// tv.registerCallbacks(tvCB)
+// tv.start();
 vsx.registerCallbacks(vsxCB)
 vsx.start();
 
 // Server part
 const express = require('express')
 const app = express()
-const port = 80
+const port = 81
 
 
 // endpoints
@@ -112,22 +127,28 @@ app.get('/vsx_vol_up', (req, res) => {
 })
 
 app.get('/vsx_mcacc_bett', (req, res) => {
-    
-    vsx.assureState({
-        mcacc: 'BETT',
-        
-    })
+       if(globalState.vsx.input=="PC")
+        vsx.assureState({
+            mcacc: 'Bett',
+            input: 'TV'
+        })
+    else
+        vsx.assureState({
+            mcacc: 'Bett'
+        })
 
     res.send('ok')
 })
 app.get('/vsx_mcacc_pc', (req, res) => {
     
     vsx.assureState({
-        mcacc: 'PC',
+        mcacc: 'PC'
+
     })
 
     res.send('ok')
 })
+
 
 app.listen(port, () => {
 console.log(`Example app listening at http://localhost:${port}`)

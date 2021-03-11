@@ -45,7 +45,15 @@ let connected,
                     Bett:"6MC"
                 },
                 state:undefined
-            }
+            },
+            zone2_power:{
+                type:"selectMap",
+                values:{
+                    An:"APR0",
+                    Aus:"APR1",
+                },
+                state: undefined
+            },
     }
     
     let connect = function(options) {
