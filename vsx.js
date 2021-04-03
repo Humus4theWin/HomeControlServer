@@ -16,7 +16,7 @@ let connected,
                 value: undefined,
                 switch: async function (newState){
                     writeData(newState.power?"PO":"PF")
-                     if(newState.power&&state.power!==true) await sleep(2000);
+                     if(newState.power===true&&state.power!==true) await sleep(2000);
                 },
                 check: function (line){
                     if(line.startsWith("PWR1"))
