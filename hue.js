@@ -34,7 +34,7 @@ let state = {
             state: undefined
         },
         Hell:{
-            id:"ZYt9Y6Xri8ab1Qs",
+            id:"v9mpGWVPm1x3GJ8",
             state: undefined
         },    
     }
@@ -76,8 +76,8 @@ exports.turnSub = (powerState) => {
     axios.put(SWURL, {"on":powerState})
 }
 
-exports.turnLightsOn = (bright) => {  
-    console.log("HUE Lights on, bright: " + bright)
+exports.turnLightsOn = (scene) => {  
+    console.log("HUE Lights on, bright: " + scene)
     let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/groups/1/action"
-    axios.put(SWURL, {"scene":bright?state.scenes.Konzentrieren.id:state.scenes.ChillPC.id})
+    axios.put(SWURL, {"scene":state.scenes[scene].id})
 }

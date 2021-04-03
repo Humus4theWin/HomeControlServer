@@ -59,7 +59,7 @@ let TV_CALLBACKS = {
            input: 'TV',
            mcacc:3,
        })
-       hue.turnLightsOn(false)
+       hue.turnLightsOn("ChillPC")
     },
 
     onNetflixOn: function(){
@@ -68,7 +68,7 @@ let TV_CALLBACKS = {
             input: 'TV',
             mcacc:3,
         })
-        hue.turnLightsOn(false)
+        hue.turnLightsOn("ChillPC")
     },
 }
 tv.registerCallbacks(TV_CALLBACKS)
@@ -152,7 +152,7 @@ app.get('/PC_Display_off', (req, res) => {
             mcacc: 2,
         })
         
-        hue.turnLightsOn(false)
+        hue.turnLightsOn("Hell")
 
     res.send('ok')
 })
@@ -162,7 +162,7 @@ app.get('/PC_Display_on', (req, res) => {
     })
 
     let hour = new Date().getHours();
-    hue.turnLightsOn(hour>6&&hour<20)
+    hue.turnLightsOn(hour>6&&hour<20?"Konzentrieren":"Hell")
 
     res.send('ok')
 })
