@@ -19,7 +19,7 @@ let restTimeAfterManualShift = 20 * 60 *1000; //20 minutes
 //define Event Callbacks
 
 function VSX_CALLBACK(oldState, newState) {
-    
+
     // subwoofer
     if(newState.power === true && new Date().getHours < startTime)
         hue.turnSub(true)
@@ -49,6 +49,37 @@ function VSX_CALLBACK(oldState, newState) {
 }
 vsx.registerCallback(VSX_CALLBACK);
 vsx.start();
+
+
+
+// auto volume decrease at evening
+setInterval(() => {
+    let now = new Date() //make ssure your system is set to correct Timezone
+    
+    if(now.getHours()>=startTime){    // time is reached
+        let state = vsx.getState();  
+        //console.log("Time " + now.getHours() +":" + now.getMinutes() + "Vol: "+ state.volume)
+        //console.log("time since vol" + (new Date() - lastManualVolShift))                             
+
+        // turn sub off routine
+        if(now.getHours()==startTime && now.getMinutes()<=changeIntervall)  //first 
+            hue.turnSub(false);
+
+            // decrease Volume routine
+            if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume too loud
+               && new Date() - lastManualVolShift > restTimeAfterManualShift){ // no rest time
+                vsx.assureState({
+                    volume: state.volume - decreaseVolume
+                })
+            }
+    }
+    
+}, changeIntervall);
+
+
+
+
+
 
 const express = require('express')
 const app = express()
@@ -101,27 +132,7 @@ app.get('/PC_Display_on', (req, res) => {
     res.send('ok')
 })
 
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+    })
 
-// auto volume decrease at evening
-setInterval(() => {
-    let now = new Date() //make ssure your system is set to correct Timezone
-    
-    if(now.getHours()>=startTime){    // time is reached
-        let state = vsx.getState();  
-        //console.log("Time " + now.getHours() +":" + now.getMinutes() + "Vol: "+ state.volume)
-        //console.log("time since vol" + (new Date() - lastManualVolShift))                             
-
-        // turn sub off routine
-        if(now.getHours()==startTime && now.getMinutes()<=changeIntervall)  //first 
-            hue.turnSub(false);
-
-            // decrease Volume routine
-            if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume too loud
-               && new Date() - lastManualVolShift > restTimeAfterManualShift){ // no rest time
-                vsx.assureState({
-                    volume: state.volume - decreaseVolume
-                })
-            }
-    }
-    
-}, changeIntervall);
