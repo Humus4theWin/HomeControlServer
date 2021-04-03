@@ -101,7 +101,7 @@ app.get('/vsx_vol_dwn', (req, res) => {
 app.get('/vsx_vol_up', (req, res) => {
     vsx.assureState({
         power: true,
-        volume: globalState.vsx.power===true&&globalState.vsx.input=='PC'?globalState.vsx.volume +10:80,
+        volume: globalState.vsx.volume +10,
     })
 
     res.send('ok')
