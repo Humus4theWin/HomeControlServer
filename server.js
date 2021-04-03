@@ -1,155 +1,127 @@
-const vsx = require('./vsx2')
-const tv = require('./tv')
+const vsx = require('./vsx')
 const hue = require('./hue')
 
 let globalState ={};
 
-globalState.vsx = vsx.getState();
-globalState.tv = tv.getState();
+//parameter 
+let startTime = 20; //21 Uhr
+let targetVolume = 41 // -60db
+let decreaseVolume = 1 ; // -0,5db
+let changeIntervall = 1 * 60 * 1000 // each Minute
 
-let globalStateDescr ={};
-globalStateDescr.vsx = vsx.getStateDescr();
+let lastManualVolShift = new Date();    //
+let restTimeAfterManualShift = 20 * 60 *1000; //20 minutes
+
+
+
+
 
 //define Event Callbacks
-let vsxCB = {}
-vsxCB.onPowerOn = function(){
-    hue.turnSub(true)
 
-    setTimeout(function(){
+function VSX_CALLBACK(oldState, newState) {
+    
+    // subwoofer
+    if(newState.power === true && new Date().getHours < startTime)
+        hue.turnSub(true)
+    else if(newState.power === false)
+        hue.turnSub(false)
+
+    // volume offset after 1s
+    if(newState.input){
+        let volumeOffset =  vsx.getInputOffset(newState.input) - vsx.getInputOffset(oldState.input);
+        let newVolume  = oldState.volume + volumeOffset
+
+        console.log("Input Offseets/Volume: " +volumeOffset + "/"+ newVolume)
+        if ( newVolume<0) newVolume = 41
+            
+        if(volumeOffset && newVolume)
+        
         vsx.assureState({
-            zone2_power:'on'
-        }),2000
-    })
-
-    console.log("onPowerOn")
-}
-vsxCB.onPowerOff =function(){
-    hue.turnSub(false)
-
-    setTimeout(function(){
-        vsx.assureState({
-            zone2_power:'off'
-        }), 2000
-    })
-
-
-    console.log(globalState)
-}
-vsxCB.onMCACC =function(){
-    console.log(globalState)
-}
-vsxCB.onVol = function(){
-    console.log(globalState)
-}
-vsxCB.onChannel =function(){
-    console.log(globalState)
-}
-
-let tvCB = {};
-tvCB.onPowerOn = function(){
-    console.log("TV on")
-
-
-}
-tvCB.onPowerOff =function(){
-    console.log("TV off")
-}
-
-tvCB.onNetflixOn = function(){
-    vsx.assureState({
-        power: 'on',
-        mcacc: 'Bett',
-        volume: 125,
-        input: 'TV'
-    })
-    console.log("onNetflixOn")
-}
-tvCB.onNetflixOff = function(){
-    if(globalState.vsx.input=='TV')
-        vsx.assureState({
-            volume: 100
+            volume: newVolume
         })
-    console.log("onNetflixOff")
-}
+    }
 
-tvCB.onYoutubeOn =function(){    
-    vsx.assureState({
-        power: 'on',
-        mcacc: 'Bett',
-        volume: 125,
-        input: 'TV'
-    })
+    //save timestmp of vol shift 
+    if(newState.volume && Math.abs(newState.volume-oldState.volume)==1)
+        lastManualVolShift = new Date();
 
-    console.log("onYoutubeOn")
+    globalState.vsx = vsx.getState();
 }
-tvCB.onYoutubeOff =function(){
-    if(globalState.vsx.input=='TV')
-        vsx.assureState({
-            volume: 100
-        })
-    console.log("onYoutubeOff")
-}
-
-// tv.registerCallbacks(tvCB)
-// tv.start();
-vsx.registerCallbacks(vsxCB)
+vsx.registerCallback(VSX_CALLBACK);
 vsx.start();
 
-// Server part
 const express = require('express')
 const app = express()
 const port = 81
 
 
-// endpoints
+// HTTP endpoints
+
 app.get('/vsx_vol_dwn', (req, res) => {
-    
     vsx.assureState({
-        power: 'on',
-        mcacc: 'PC',
+        power: true,
         volume: globalState.vsx.volume -20,
-        input: 'PC'
+
     })
 
     res.send('ok')
 })
 
 app.get('/vsx_vol_up', (req, res) => {
-    
     vsx.assureState({
-        power: 'on',
-        mcacc: 'PC',
-        volume: globalState.vsx.power==='on'&&globalState.vsx.input=='PC'?globalState.vsx.volume +20:80,
+        power: true,
+        volume: globalState.vsx.power===true&&globalState.vsx.input=='PC'?globalState.vsx.volume +20:80,
+    })
+
+    res.send('ok')
+})
+
+app.get('/vol_PC', (req, res) => {
+    vsx.assureState({
+        power: true,
+        mcacc: 1,
         input: 'PC'
     })
 
     res.send('ok')
 })
 
-app.get('/vsx_mcacc_bett', (req, res) => {
-       if(globalState.vsx.input=="PC")
+app.get('/PC_Display_off', (req, res) => {
         vsx.assureState({
-            mcacc: 'Bett',
-            input: 'TV'
-        })
-    else
-        vsx.assureState({
-            mcacc: 'Bett'
+            mcacc: 2,
         })
 
     res.send('ok')
 })
-app.get('/vsx_mcacc_pc', (req, res) => {
-    
+app.get('/PC_Display_on', (req, res) => {
     vsx.assureState({
-        mcacc: 'PC'
-
+        mcacc: 1
     })
 
     res.send('ok')
 })
 
 
-app.listen(port, () => {
-console.log(`Example app listening at http://localhost:${port}`)
-})
+// auto volume decrease at evening
+setInterval(() => {
+    let now = new Date() //make ssure your system is set to correct Timezone
+    
+    if(now.getHours()>=startTime){    // time is reached
+        let state = vsx.getState();  
+        //console.log("Time " + now.getHours() +":" + now.getMinutes() + "Vol: "+ state.volume)
+        //console.log("time since vol" + (new Date() - lastManualVolShift))                             
+
+        // turn sub off routine
+        if(now.getHours()==startTime && now.getMinutes()<=changeIntervall)  //first 
+            hue.turnSub(false);
+
+            // decrease Volume routine
+            if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume too loud
+               && new Date() - lastManualVolShift > restTimeAfterManualShift){ // no rest time
+                vsx.assureState({
+                    volume: state.volume - decreaseVolume
+                })
+            }
+    }
+    
+}, changeIntervall);

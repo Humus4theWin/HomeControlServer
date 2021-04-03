@@ -12,38 +12,79 @@ let connected,
 
     var state = {
             power:{
-                type:"selectMap",
-                values:{
-                    false:"PO",
-                    true:"PF",
+                range:[true, false],
+                value: undefined,
+                switch: async function (newState){
+                    writeData(newState.power?"PO":"PF")
+                     if(newState.power&&state.power!==true) await sleep(2000);
                 },
-                state: undefined
+                check: function (line){
+                    if(line.startsWith("PWR1"))
+                        state.power.value = false;
+
+                    else if(line.startsWith("PWR0"))
+                        state.power.value  = true;
+
+                    else return false;
+                    return true;
+                },
             },
             volume:{
-                type:"range",
-                values:[000,185],
-                state:undefined
-            },
+                range:[000,185],
+                value: undefined,
+                switch: async function (newState){
+                    let volStr = "" + newState.volume + "vl";
+                    if(volStr.length===3)
+                        volStr = "00" + volStr;
+                    else if(volStr.length===4)
+                        volStr = "0" + volStr;
+            
+                    writeData(volStr);
+                },
+                check: function (line){
+                    if(line.startsWith("VOL"))
+                        state.volume.value = parseInt(line.substr(3,3));
+
+                    else return false;
+                    return true;
+                },
+            },   
             input:{
-                type:"selectMap",
-                values:{
-                    Chromecast:"04FN",
-                    Lenovo:"25FN",
-                    TV:"15FN",
-                    PC:"05FN",
-                    Vinyl:"01FN",
-                    PS3:"06FN",
-                    PS4:"20FN",
+                range:{
+                    Chromecast:"21",
+                    Dock:"25",
+                    BT:"15",
+                    PC:"01",
+                    TV:"05",
+                    PS3:"06",
+                    PS4:"04",
+                    SPOTIFY:"44",
                 },
-                state:undefined
-            },
+                value: undefined,
+                switch: async function (newState){
+                    writeData(state.input.range[newState.input] + "FN");
+                },
+                check: function (line){
+                    if(line.startsWith("FN")){
+                        state.input.value = getByValue(state.input.range, line.substr(2,2))
+                    }else return false;
+                    return true;
+                },
+            } ,
             mcacc:{
-                type:"selectMap",
-                values:{
-                    PC:"5MC",
-                    Bett:"6MC"
+                range:[1,2,3,4,5,6],
+                value: undefined,
+                switch: async function (newState){
+                    writeData(newState.mcacc + "MC");
                 },
-                state:undefined
+                check: function (line){
+                    if(line.startsWith("MC")){
+                        state.mcacc.value = Number(line.substr(2,1))
+                    }else return false;
+                    return true;
+                },
+
+
             }
     }
     
@@ -95,98 +136,88 @@ let recData = function(buffer){
     var length = data.lastIndexOf('\r');
     data = data.substr(0, length);
     data = data.split("\n")
-    //console.log(data)
 
-    //process call -> update state, call callbacks
-    let hasChanged = data.forEach((e) =>{
-        if(e.startsWith("PWR0"&&state.power.state!==true)){
-            state.power.state=true;
-            callbackFunctions.onPowerOn();
-        }
-        else if (e.startsWith("PWR1")&&state.power.state!==false){
-            state.power.state=false;
-            callbackFunctions.onPowerOff();
-        }
-
-        else if (e.startsWith("MC")){
-            state.mcacc.state=e.substr(2,1)+"MC";
-            callbackFunctions.onMCACC();
-        }
-            
-        else if (e.startsWith("VOL")){
-            state.volume.state= parseInt(e.substr(3,3));
-            callbackFunctions.onVol();
-        }
-            
-        else if (e.startsWith("FN")){
-            state.input.state=e.substr(2,2)+"FN";
-            callbackFunctions.onChannel();
-        }
-        else
-            return false;
-
-        return true;
+    let changesStateNames = [];
+    let stateBefore = reduceState(state, Object.keys(state))
+    data.forEach( line => {
+        Object.keys(state).forEach(stateName => {
+            if( state[stateName].check(line))
+                changesStateNames.push(stateName)
+            }
+        )
+        console.log("<-- "+ line)
     })
+    if(changesStateNames.length>0){
+        console.log("\n state Changed: " )
+        console.log(reduceState(state, changesStateNames))
+        callbackFunction(stateBefore, reduceState(state, changesStateNames));
+    }
+        
+       
 }
+
 let reqData = function(){
     client.write("?P\r");
     client.write("?V\r");
     client.write("?F\r");
     client.write("?MC\r");
-
-    //sendData(["5MC","15FN"])
 }
 
-let sendData = function(stateChanges){
-    console.log(stateChanges)
-    if(stateChanges.power!=undefined){
-        client.write(stateChanges.power?"PO\r":"PF\r")
-        stateChanges.power= undefined;
-         return setTimeout(sendData,2000,stateChanges)
-    }
-    else if(stateChanges.volume!=undefined){
-        let volStr = "" + stateChanges.volume;
-        if(volStr.length===1)
-            volStr = "00" + volStr;
-        else if(volStr.length===2)
-            volStr = "0" + volStr;
-
-        volStr+="vl"
-        client.write(volStr + "\r");
-        stateChanges.volume=undefined;
-        return sendData(stateChanges)
-    }
-    else if(stateChanges.input!=undefined){
-        client.write(stateChanges.input + "\r");
-        stateChanges.input=undefined;
-        return sendData(stateChanges)
-    }
-    else if(stateChanges.mcacc!=undefined){
-        client.write(stateChanges.mcacc + "\r");
-        stateChanges.mcacc=undefined;
-        return sendData(stateChanges)
-    }else{
-        return;
-    }
+let writeData = function(line){
+    client.write(line + "\r");
+    console.log("--> "+ line)
 }
 
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-exports.getState = () => {  
-    return state;
+  function getByValue(obj, searchValue) {
+    var keys = Object.keys(obj);
+    for(var i=0; i<keys.length; i++){
+        var key = keys[i];
+        if(obj[key]===searchValue)
+            return key
+    }
 }
 
-let callbackFunctions = {};
-exports.registerCallbacks = (cbFkts) => {  
-    callbackFunctions = cbFkts;
-}
-exports.assureState = (stateChanges) => {  
-    console.log("VSX-change state: " + JSON.stringify(stateChanges));
-    sendData(stateChanges);
+function reduceState(stateObj, stateNames){
+    let output = {}
+    stateNames.forEach( stateName =>  output[stateName] = stateObj[stateName].value)
+   return output;
     
 }
+
+exports.getState = () => {  
+    return reduceState(state, Object.keys(state))
+}
+
+let callbackFunction = {};
+exports.registerCallback = (cb) => {  
+    callbackFunction = cb;
+}
+exports.assureState = async function (newState) {  
+    console.log("\n change Request: ")
+    console.log(newState)
+    for(let key in newState){
+        console.log(key)
+        await state[key].switch(newState) 
+    }
+    
+}
+
 
 exports.start = () => {  
     connect();
 }
-//startConnection
+exports.getInputOffset = (device) => {
+    let devices = {
+        PC: 20,
+        BT: 25,
+        TV: 25,
+    }
+    let offset = devices[device]
+    if ( offset) return offset;
+    return 0;
+}
