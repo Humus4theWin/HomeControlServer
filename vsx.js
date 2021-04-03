@@ -83,8 +83,6 @@ let connected,
                     }else return false;
                     return true;
                 },
-
-
             }
     }
     

@@ -13,9 +13,6 @@ let lastManualVolShift = new Date();    //
 let restTimeAfterManualShift = 20 * 60 *1000; //20 minutes
 
 
-
-
-
 //define Event Callbacks
 
 function VSX_CALLBACK(oldState, newState) {
@@ -54,7 +51,7 @@ vsx.start();
 
 // auto volume decrease at evening
 setInterval(() => {
-    let now = new Date() //make ssure your system is set to correct Timezone
+    let now = new Date() //make sure your system is set to correct Timezone
     
     if(now.getHours()>=startTime){    // time is reached
         let state = vsx.getState();  
@@ -66,7 +63,7 @@ setInterval(() => {
             hue.turnSub(false);
 
             // decrease Volume routine
-            if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume too loud
+            if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume to loud
                && new Date() - lastManualVolShift > restTimeAfterManualShift){ // no rest time
                 vsx.assureState({
                     volume: state.volume - decreaseVolume
@@ -126,7 +123,7 @@ app.get('/PC_Display_off', (req, res) => {
 })
 app.get('/PC_Display_on', (req, res) => {
     vsx.assureState({
- //       mcacc: 1
+       mcacc: 1
     })
 
     res.send('ok')
