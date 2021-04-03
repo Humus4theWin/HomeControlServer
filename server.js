@@ -6,7 +6,7 @@ const tv = require('./tv')
 
 //parameter 
 let startTime = 20; //21 Uhr
-let targetVolume = 41 // -60db
+let targetVolume = 56 // 45 db Room
 let decreaseVolume = 1 ; // -0,5db
 let changeIntervall = 1 * 60 * 1000 // each Minute
 
@@ -30,7 +30,7 @@ function VSX_CALLBACK(oldState, newState) {
         let newVolume  = oldState.volume + volumeOffset
 
         console.log("Input Offseets/Volume: " +volumeOffset + "/"+ newVolume)
-        if ( newVolume<0) newVolume = 41
+        if ( newVolume<0) newVolume = targetVolume
             
         if(volumeOffset && newVolume)
         
@@ -39,7 +39,7 @@ function VSX_CALLBACK(oldState, newState) {
         })
     }else if(newState.power)    // change volume at turn on
         vsx.assureState({
-            volume: 41 + vsx.getInputOffset(oldState.input)
+            volume: targetVolume + vsx.getInputOffset(oldState.input)
         })
 
     //save timestmp of vol shift 

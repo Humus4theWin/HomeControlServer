@@ -19,14 +19,15 @@ let connected,
                      if(newState.power===true&&state.power.value!==true) await sleep(2000);
                 },
                 check: function (line){
-                    if(line.startsWith("PWR1"))
+                    if(line.startsWith("PWR1")&&state.power.value !== false){
                         state.power.value = false;
-
-                    else if(line.startsWith("PWR0"))
+                        return true;
+                    }
+                    else if(line.startsWith("PWR0")&&state.power.value !== true){
                         state.power.value  = true;
-
-                    else return false;
-                    return true;
+                        return true;
+                    }
+                    return false;
                 },
             },
             volume:{
