@@ -79,5 +79,5 @@ exports.turnSub = (powerState) => {
 exports.turnLightsOn = (bright) => {  
     console.log("HUE Lights on, bright: " + bright)
     let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/groups/1/action"
-    axios.put(SWURL, {"scene":bright?state.scenes.Konzentrieren:state.scenes.ChillPC})
+    axios.put(SWURL, {"scene":bright?state.scenes.Konzentrieren.id:state.scenes.ChillPC.id})
 }
