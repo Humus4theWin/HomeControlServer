@@ -1,6 +1,6 @@
 const vsx = require('./vsx')
 const hue = require('./hue')
-const hue = require('./tv')
+const tv = require('./tv')
 
 
 
