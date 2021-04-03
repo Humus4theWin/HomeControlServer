@@ -126,6 +126,9 @@ app.get('/PC_Display_on', (req, res) => {
        mcacc: 1
     })
 
+    let hour = new Date().getHours();
+    hue.turnLightsOn(hour>6&&hour<20)
+    
     res.send('ok')
 })
 
