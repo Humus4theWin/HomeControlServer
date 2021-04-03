@@ -1,7 +1,8 @@
 const vsx = require('./vsx')
 const hue = require('./hue')
+const hue = require('./tv')
 
-let globalState ={};
+
 
 //parameter 
 let startTime = 20; //21 Uhr
@@ -41,11 +42,40 @@ function VSX_CALLBACK(oldState, newState) {
     //save timestmp of vol shift 
     if(newState.volume && Math.abs(newState.volume-oldState.volume)==1)
         lastManualVolShift = new Date();
-
-    globalState.vsx = vsx.getState();
 }
 vsx.registerCallback(VSX_CALLBACK);
 vsx.start();
+
+
+
+// TV
+let TV_CALLBACKS = {
+    onYoutubeOn: function(){
+       vsx.assureState({
+           power: true,
+           input: 'TV',
+           mcacc:3,
+       })
+       hue.turnLightsOn(false)
+    },
+
+    onNetflixOn: function(){
+        vsx.assureState({
+            power: true,
+            input: 'TV',
+            mcacc:3,
+        })
+        hue.turnLightsOn(false)
+    },
+}
+tv.registerCallbacks(TV_CALLBACKS)
+tv.start();
+
+// TV workaround
+process.on('uncaughtException', function (err) {
+    //console.log(err);
+}); 
+
 
 
 
@@ -88,7 +118,7 @@ const port = 81
 app.get('/vsx_vol_dwn', (req, res) => {
     vsx.assureState({
         power: true,
-        volume: globalState.vsx.volume -10,
+        volume: vsx.getState().volume -10,
 
     })
 
@@ -98,7 +128,7 @@ app.get('/vsx_vol_dwn', (req, res) => {
 app.get('/vsx_vol_up', (req, res) => {
     vsx.assureState({
         power: true,
-        volume: globalState.vsx.volume +10,
+        volume: vsx.getState().volume +10,
     })
 
     res.send('ok')
