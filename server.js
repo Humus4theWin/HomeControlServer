@@ -91,7 +91,7 @@ const port = 81
 app.get('/vsx_vol_dwn', (req, res) => {
     vsx.assureState({
         power: true,
-        volume: globalState.vsx.volume -20,
+        volume: globalState.vsx.volume -10,
 
     })
 
@@ -101,7 +101,7 @@ app.get('/vsx_vol_dwn', (req, res) => {
 app.get('/vsx_vol_up', (req, res) => {
     vsx.assureState({
         power: true,
-        volume: globalState.vsx.power===true&&globalState.vsx.input=='PC'?globalState.vsx.volume +20:80,
+        volume: globalState.vsx.power===true&&globalState.vsx.input=='PC'?globalState.vsx.volume +10:80,
     })
 
     res.send('ok')
