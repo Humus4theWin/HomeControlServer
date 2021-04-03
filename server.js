@@ -35,9 +35,13 @@ function VSX_CALLBACK(oldState, newState) {
         if(volumeOffset && newVolume)
         
         vsx.assureState({
-            volume: newVolume
+            volume: 41 + vsx.getInputOffset(oldState.input)
         })
     }
+    else if(newState.power)    // change volume at turn on
+    vsx.assureState({
+        volume: oldState.volume + 
+    })
 
     //save timestmp of vol shift 
     if(newState.volume && Math.abs(newState.volume-oldState.volume)==1)

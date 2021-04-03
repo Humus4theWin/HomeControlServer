@@ -28,9 +28,6 @@ let connect = function() {
     }catch (err){
       console.log("TV no connection")
     }
-
-
-  
     setTimeout(function(){
       console.log("TV try reconnect")
         connect();
@@ -69,6 +66,20 @@ let recData = function(line){
         }
       })    
     },2000)
+    setTimeout(function(){
+      axios.get(REST_URL+"/"+"Netflix").then((res) => {
+        if(res.data.toString().includes("<state>running</state>")){
+          if(state !== "Netflix"){
+            state = "Netflix";
+            callbackFunctions.onNetflixOn();
+            }
+          }else if(res.data.toString().includes("<state>stopped</state>"))
+          if(state === "Netflix"){
+            state=undefined;
+          //  callbackFunctions.onNetflixOff();
+          }
+        })    
+      },5000)
   }
 }
 
