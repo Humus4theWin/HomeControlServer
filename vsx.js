@@ -104,24 +104,25 @@ let connected,
         client.on("end", function() {
             console.log("VSX disconnected");
             connected=false;
-            connect();
+            //connect();
         });
         client.on("close", function() {
             console.log("VSX close");
             connected=false;
-            connect();
+            //connect();
         });
 
         client.on("timeout", function() {
             console.log("VSX timeout");
             connected=false;
-            connect();
+            //connect();
         });
     
         client.on("error", function(err) {
             console.log(err);
             let client = connect();
             connected=false;
+            client.close();
             setTimeout(()=> {
                 console.log("VSX try reconnect");
                 connect();

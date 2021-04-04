@@ -9,6 +9,10 @@ let connect = function() {
     ws = new WebSocket('ws://192.168.188.41:7681/');
   }catch (err){
     console.log("TV connection failed")
+    setTimeout(function(){
+      console.log("TV try reconnect")
+        connect();
+    },3000)
   }
   
 

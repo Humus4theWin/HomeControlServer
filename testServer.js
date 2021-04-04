@@ -15,5 +15,5 @@ tv.start();
 
 
 process.on('uncaughtException', function (err) {
-    //console.log(err);
+    console.log("TV error");
 }); 

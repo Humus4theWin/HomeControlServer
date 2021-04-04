@@ -15,11 +15,10 @@ let restTimeAfterManualShift = 20 * 60 *1000; //20 minutes
 
 
 //define Event Callbacks
-
 function VSX_CALLBACK(oldState, newState) {
 
     // subwoofer
-    if(newState.power === true && new Date().getHours < startTime)
+    if(newState.power === true && new Date().getHours() < startTime)
         hue.turnSub(true)
     else if(newState.power === false)
         hue.turnSub(false)
@@ -33,10 +32,12 @@ function VSX_CALLBACK(oldState, newState) {
         if ( newVolume<0) newVolume = targetVolume
             
         if(volumeOffset && newVolume)
-        
-        vsx.assureState({
-            volume: newVolume
-        })
+            setTimeout(function(){
+                vsx.assureState({
+                    volume: newVolume
+                })
+            },100)
+       
     }else if(newState.power)    // change volume at turn on
         vsx.assureState({
             volume: targetVolume + vsx.getInputOffset(oldState.input)
@@ -76,7 +77,7 @@ tv.start();
 
 // TV workaround
 process.on('uncaughtException', function (err) {
-    //console.log(err);
+    console.log("TV error");
 }); 
 
 
@@ -152,7 +153,7 @@ app.get('/PC_Display_off', (req, res) => {
             mcacc: 2,
         })
         
-        hue.turnLightsOn("Hell")
+        hue.turnLightsOn(hour<6&&hour>20?"Dark":"ChillPC")
 
     res.send('ok')
 })
