@@ -152,7 +152,7 @@ app.get('/PC_Display_off', (req, res) => {
         vsx.assureState({
             mcacc: 2,
         })
-        
+        let hour = new Date().getHours();
         hue.turnLightsOn(hour<6&&hour>20?"Dark":"ChillPC")
 
     res.send('ok')
