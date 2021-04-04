@@ -6,7 +6,7 @@ const tv = require('./tv')
 
 //parameter 
 let startTime = 20; //21 Uhr
-let targetVolume = 56 // 45 db Room
+let targetVolume = 51 // 45 db Room
 let decreaseVolume = 1 ; // -0,5db
 let changeIntervall = 1 * 60 * 1000 // each Minute
 
@@ -153,7 +153,7 @@ app.get('/PC_Display_off', (req, res) => {
             mcacc: 2,
         })
         let hour = new Date().getHours();
-        hue.turnLightsOn(hour<6&&hour>20?"Dark":"ChillPC")
+        hue.turnLightsOn(hour<6&&hour>20?"Dark":"Hell")
 
     res.send('ok')
 })

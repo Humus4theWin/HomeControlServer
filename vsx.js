@@ -213,9 +213,9 @@ exports.start = () => {
 }
 exports.getInputOffset = (device) => {
     let devices = {
-        PC: 20,
-        BT: 25,
-        TV: 25,
+        PC: 25,
+        BT: 30,
+        TV: 30,
     }
     let offset = devices[device]
     if ( offset) return offset;
