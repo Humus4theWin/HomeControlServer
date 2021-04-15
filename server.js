@@ -148,12 +148,21 @@ app.get('/vol_PC', (req, res) => {
     res.send('ok')
 })
 
+app.get('/sound_bett', (req, res) => {
+    vsx.assureState({
+        power: true,
+        mcacc: 4,
+    })
+
+    res.send('ok')
+})
+
 app.get('/PC_Display_off', (req, res) => {
         vsx.assureState({
             mcacc: 2,
         })
         let hour = new Date().getHours();
-        hue.turnLightsOn(hour<6&&hour>20?"Dark":"Hell")
+        hue.turnLightsOn(hour<6||hour>20?"Dark":"Hell")
 
     res.send('ok')
 })
@@ -171,4 +180,3 @@ app.get('/PC_Display_on', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
     })
-
