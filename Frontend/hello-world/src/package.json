@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "vue-cli-plugin-axios": "~0.0.4"
   }
 }
