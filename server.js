@@ -111,12 +111,12 @@ setInterval(() => {
 
 
 
-
+var cors = require('cors');
 const express = require('express')
 const app = express()
 const port = 81
 
-
+app.use(cors());
 app.use(express.json());        // new
 
 // HTTP endpoints

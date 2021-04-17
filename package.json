@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Humus4theWin/HomeControl4Smarties#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "openpromise": "^2.2.1",
     "vue": "^2.6.12",
