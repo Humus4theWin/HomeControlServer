@@ -62,6 +62,8 @@ function createButton(type, value){
                 let button = createButton(type,value)
                 if(data.value == value)
                     button.className = "selected"
+                else if(type == "volume" && Math.abs(value-data.value)<10)
+                    button.className = "selected"
 
                 elem.appendChild(button)
             })
