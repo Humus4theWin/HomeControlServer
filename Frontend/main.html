@@ -81,7 +81,7 @@ function renderPage(data){
     document.body.remove
     Object.keys(data).forEach(type => {
         if(type=="volume")
-            createTietle(type +":" + data[type].value)
+            createTietle(type +":" + ((data[type].value/2) - 80) + "db")
         else
             createTietle(type)
         
