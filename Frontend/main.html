@@ -1,0 +1,135 @@
+<body>
+
+
+
+</body>
+
+
+
+
+<script>
+let url = 'http://192.168.188.67:81/vsx'
+ url = 'http://localhost:81/vsx'
+
+
+function init(){
+    fetch(url).then(
+    function(response) {
+        response.json().then(function(data) {
+        console.log(data);
+        renderPage(data)
+        })
+        }
+    )  
+}
+
+function createButton(type, value){
+    let elem = document.createElement("button")
+    let data = {}
+    data[type] = value
+    
+    elem.onclick = function(){
+        fetch(url,{
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            //mode: 'no-cors',
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(res => renderPage(res));
+    }
+    elem.innerHTML = getText(type, value)
+    return elem;
+    }
+
+    function createTietle(name){
+        let tietle = document.createElement('h1')
+        tietle.innerHTML = name
+        document.body.appendChild(tietle)
+    }
+
+    function createContainer(){
+        let elem = document.createElement('div')
+
+        elem.createButtons = function(data,type){
+            Object.keys(data.range).forEach(value =>{
+        
+                if( Array.isArray(data.range))
+                    value = data.range[value]
+
+                let button = createButton(type,value)
+                if(data.value == value)
+                    button.className = "selected"
+
+                elem.appendChild(button)
+            })
+    }
+
+    document.body.appendChild(elem)
+    return elem
+}
+
+
+function renderPage(data){
+    var lista = document.body.childNodes;
+    for (var i = lista.length - 1; i >= 0 ;i--){
+       if(lista[i].tagName!="STYLE")
+         document.body.removeChild(lista[i])
+    }
+
+    document.body.remove
+    Object.keys(data).forEach(type => {
+        createTietle(type)
+        createContainer().createButtons(data[type],type)
+    })
+}
+
+function getText(type, value){
+    switch(type){
+    case "volume":
+        return ((value/2) - 80) + "db"
+    case "mcacc": 
+        return value
+    case "power":
+        return value?"AN":"AUS"
+    case "input": 
+        return value
+
+    }
+}
+function getValue(type, value){
+    if(key=='input')
+    return
+
+}
+
+
+
+init();
+</script>
+
+<style>
+
+    h1 {
+        font-size: 5em;
+        background-color: lightgray;
+        padding: 0.1em;
+    }
+    div {
+        display:flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    button {
+        width: 30%;
+        min-height: 4em;
+        margin: 1em 0.2em;
+        font-size: 3em
+    }
+    .selected {
+        background-color: gray;
+    }
+    
+    </style>
