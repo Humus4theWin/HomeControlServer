@@ -86,6 +86,8 @@ let connected,
                 },
             }
     }
+
+
     
     let connect = function() {
         var self = this;
@@ -191,6 +193,17 @@ function reduceState(stateObj, stateNames){
 
 exports.getState = () => {  
     return reduceState(state, Object.keys(state))
+}
+
+exports.getControls = () => {       // for frontend
+    let output = {}
+    Object.keys(state).forEach( stateName =>  {
+        output[stateName] = {}
+        output[stateName].value = state[stateName].value
+        output[stateName].range = state[stateName].range
+    });
+
+    return output;
 }
 
 let callbackFunction = {};

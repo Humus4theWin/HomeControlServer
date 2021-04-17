@@ -117,6 +117,8 @@ const app = express()
 const port = 81
 
 
+app.use(express.json());        // new
+
 // HTTP endpoints
 
 app.get('/vsx_vol_dwn', (req, res) => {
@@ -154,7 +156,7 @@ app.get('/sound_bett', (req, res) => {
         mcacc: 4,
     })
 
-    res.send('ok')
+    res.redirect("/");      // todo: test
 })
 
 app.get('/PC_Display_off', (req, res) => {
@@ -176,6 +178,24 @@ app.get('/PC_Display_on', (req, res) => {
 
     res.send('ok')
 })
+
+
+// Frontend endpoints
+app.post('/vsx', function(req, res){
+    vsx.assureState(req.body)
+
+    res.send('ok');
+  });
+
+app.get('/vsx', function(req, res){
+
+    res.send(vsx.getControls());
+  });
+
+  app.get('/', function(req, res){      //vue
+
+    res.send('ok');
+  });
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
