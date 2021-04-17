@@ -80,8 +80,12 @@ function renderPage(data){
 
     document.body.remove
     Object.keys(data).forEach(type => {
-        createTietle(type)
-        createContainer().createButtons(data[type],type)
+        if(type=="volume")
+            createTietle(type +":" + data[type].value)
+        else
+            createTietle(type)
+        
+            createContainer().createButtons(data[type],type)
     })
 }
 
