@@ -110,11 +110,13 @@ setInterval(() => {
 
 
 
-
+const cors = require('cors');
 const express = require('express')
 const app = express()
 const port = 81
 
+app.use(cors());
+app.options('*', cors());
 
 app.use(express.json());        // new
 
@@ -182,19 +184,20 @@ app.get('/PC_Display_on', (req, res) => {
 // Frontend endpoints
 app.post('/vsx', function(req, res){
     res.set('Access-Control-Allow-Origin', '*');        //dev
+
+    console.log("POST: "+JSON.stringify(req.body))
     vsx.assureState(req.body)
-    console.log("POST: "+req.body)
-    res.send('ok');
+
+    setTimeout(()=>res.send(vsx.getControls()),500)     //hacky
   });
 
+
 app.get('/vsx', function(req, res){
-    res.set('Access-Control-Allow-Origin', '*');        //dev
     res.send(vsx.getControls());
   });
 
   app.get('/', function(req, res){      //vue
-    res.set('Access-Control-Allow-Origin', '*');        //dev
-    res.send('ok');
+    res.sendFile('Frontend/main.html',{root: __dirname })
   });
 
 app.listen(port, () => {

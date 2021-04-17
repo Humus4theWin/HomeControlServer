@@ -31,7 +31,7 @@ let connected,
                 },
             },
             volume:{
-                range:[000,185],
+                range:  [20,40,60,80,100],    //[000,185],
                 value: undefined,
                 switch: async function (newState){
                     let volStr = "" + newState.volume + "vl";
