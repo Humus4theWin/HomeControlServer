@@ -181,18 +181,19 @@ app.get('/PC_Display_on', (req, res) => {
 
 // Frontend endpoints
 app.post('/vsx', function(req, res){
+    res.set('Access-Control-Allow-Origin', '*');        //dev
     vsx.assureState(req.body)
-
+    console.log("POST: "+req.body)
     res.send('ok');
   });
 
 app.get('/vsx', function(req, res){
-    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Origin', '*');        //dev
     res.send(vsx.getControls());
   });
 
   app.get('/', function(req, res){      //vue
-
+    res.set('Access-Control-Allow-Origin', '*');        //dev
     res.send('ok');
   });
 
