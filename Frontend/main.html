@@ -8,6 +8,7 @@
 
 
 <script>
+    let oldState ={}
 let url = '/vsx'
  //url = 'http://localhost:81/vsx'
 
@@ -17,7 +18,7 @@ function init(){
     function(response) {
         response.json().then(function(data) {
         console.log(data);
-        renderPage(data)
+            renderPage(data)
         })
         }
     )  
@@ -72,6 +73,11 @@ function createButton(type, value){
 
 
 function renderPage(data){
+    if(JSON.stringify(oldState) == JSON.stringify(data))
+        return;
+
+    console.log("re-render");
+
     var lista = document.body.childNodes;
     for (var i = lista.length - 1; i >= 0 ;i--){
        if(lista[i].tagName!="STYLE")
@@ -87,6 +93,7 @@ function renderPage(data){
         
             createContainer().createButtons(data[type],type)
     })
+    oldState = data;
 }
 
 function getText(type, value){
@@ -105,12 +112,11 @@ function getText(type, value){
 function getValue(type, value){
     if(key=='input')
     return
-
 }
 
 
-
 init();
+setInterval(()=>init(),1000)
 </script>
 
 <style>
