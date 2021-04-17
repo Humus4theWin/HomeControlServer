@@ -111,12 +111,11 @@ setInterval(() => {
 
 
 
-var cors = require('cors');
 const express = require('express')
 const app = express()
 const port = 81
 
-app.use(cors());
+
 app.use(express.json());        // new
 
 // HTTP endpoints
@@ -188,7 +187,7 @@ app.post('/vsx', function(req, res){
   });
 
 app.get('/vsx', function(req, res){
-
+    res.set('Access-Control-Allow-Origin', '*');
     res.send(vsx.getControls());
   });
 
