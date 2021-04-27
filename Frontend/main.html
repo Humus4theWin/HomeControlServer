@@ -1,134 +1,99 @@
-<body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
 
 
-</body>
+<div id="app">
+    <div v-for="group in Object.keys(vsx)">
+        <h3> {{ group }}: {{ beautifyText( group, vsx[group].value ) }}</h3>
 
+        <div class="container">
+            <select-btn
+                v-if="group!='volume'"
+                v-for="value in vsx[group].range"
+                v-bind:class="value==vsx[group].value?'selected':''"
+                v-bind:name= 'group'
+                v-bind:text= 'beautifyText( group, value )'
+                v-bind:value= 'value'
+                v-bind:key="group.id"
+                v-on:change-request="postData"
+                > 
 
+            </select-btn>
+
+            <input
+                v-if="group=='volume'"
+                type="range" 
+                v-bind:min="vsx[group].range[0]" 
+                v-bind:max="vsx[group].range[ vsx[group].range.length -1 ]" 
+                v-model:value ="vsx[group].value"
+                v-on:change= "postData('volume',vsx[group].value)"
+                step="1"
+            ></input">
+        </div>
+    </div>
+</div>
 
 
 <script>
-    let oldState ={}
-let url = '/vsx'
- //url = 'http://localhost:81/vsx'
-
-
-function init(){
-    fetch(url).then(
-    function(response) {
-        response.json().then(function(data) {
-        console.log(data);
-            renderPage(data)
-        })
-        }
-    )  
-}
-
-function createButton(type, value){
-    let elem = document.createElement("button")
-    let data = {}
-    data[type] = value
-    
-    elem.onclick = function(){
-        fetch(url,{
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
+    var app = new Vue({
+        el: '#app',
+        data: {
+            vsx: {}
+        },
+        created (){
+            this.getData()
+        },
+        methods: {
+            getData(){
+                fetch('http://192.168.188.67:81/vsx')
+                .then(response => response.json())
+                .then( json => this.vsx = json)
             },
-            //mode: 'no-cors',
-            body: JSON.stringify(data)
-        }).then(res => res.json()).then(res => renderPage(res));
-    }
-    elem.innerHTML = getText(type, value)
-    return elem;
-    }
-
-    function createTietle(name){
-        let tietle = document.createElement('h1')
-        tietle.innerHTML = name
-        document.body.appendChild(tietle)
-    }
-
-    function createContainer(){
-        let elem = document.createElement('div')
-
-        elem.createButtons = function(data,type){
-            Object.keys(data.range).forEach(value =>{
-        
-                if( Array.isArray(data.range))
-                    value = data.range[value]
-
-                let button = createButton(type,value)
-                if(data.value == value)
-                    button.className = "selected"
-                else if(type == "volume" && Math.abs(value-data.value)<10)
-                    button.className = "selected"
-
-                elem.appendChild(button)
-            })
-    }
-
-    document.body.appendChild(elem)
-    return elem
-}
-
-
-function renderPage(data){
-    if(JSON.stringify(oldState) == JSON.stringify(data))
-        return;
-
-    console.log("re-render");
-
-    var lista = document.body.childNodes;
-    for (var i = lista.length - 1; i >= 0 ;i--){
-       if(lista[i].tagName!="STYLE")
-         document.body.removeChild(lista[i])
-    }
-
-    document.body.remove
-    Object.keys(data).forEach(type => {
-        if(type=="volume")
-            createTietle(type +":" + ((data[type].value/2) - 80) + "db")
-        else
-            createTietle(type)
-        
-            createContainer().createButtons(data[type],type)
+            postData(key,value){
+                newState = {}
+                newState[key] = value
+                console.log(newState)
+                fetch('http://192.168.188.67:81/vsx',{
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newState)
+                }).then(res => res.json()).then(json => this.vsx = json);
+            },
+            beautifyText(type, value){
+                switch(type){
+                case "volume":
+                    return ((value/2) - 80) + "db"
+                case "mcacc": 
+                    return value
+                case "power":
+                    return value?"AN":"AUS"
+                case "input": 
+                    return value
+                }
+            }
+        }
     })
-    oldState = data;
-}
 
-function getText(type, value){
-    switch(type){
-    case "volume":
-        return ((value/2) - 80) + "db"
-    case "mcacc": 
-        return value
-    case "power":
-        return value?"AN":"AUS"
-    case "input": 
-        return value
+    Vue.component('select-btn', {
+        props: ['name','value','text'],
+        template: '<button v-on:click="$emit(\'change-request\', name, value)"> {{ text }} </button>'
+    })
 
-    }
-}
-function getValue(type, value){
-    if(key=='input')
-    return
-}
+ 
 
-
-init();
-setInterval(()=>init(),1000)
 </script>
 
-<style>
 
-    h1 {
+<style>
+    h3 {
         font-size: 5em;
         background-color: lightgray;
-        padding: 0.1em;
+    
     }
-    div {
+    .container {
         display:flex;
         flex-wrap: wrap;
         justify-content: space-between;
@@ -137,11 +102,18 @@ setInterval(()=>init(),1000)
     button {
         width: 30%;
         min-height: 4em;
+        min-width: 6em;
         margin: 1em 0.2em;
         font-size: 3em
     }
     .selected {
         background-color: gray;
     }
+    input {
+        width: 100%;
+        min-height: 20em;
+    
+    }
     
     </style>
+    
