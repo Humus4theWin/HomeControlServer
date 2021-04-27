@@ -203,6 +203,8 @@ exports.getControls = () => {       // for frontend
         output[stateName].range = state[stateName].range
     });
 
+    output.input.range = Object.keys(output.input.range)
+
     return output;
 }
 
