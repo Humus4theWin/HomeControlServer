@@ -76,6 +76,13 @@ exports.turnSub = (powerState) => {
     axios.put(SWURL, {"on":powerState})
 }
 
+exports.turnVent = (powerState) => {  
+    console.log("HUE SW: "+ powerState)
+    let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/lights/30/state"
+    axios.put(SWURL, {"on":powerState})
+}
+
+
 exports.turnLightsOn = (scene) => {  
     console.log("HUE Lights on, bright: " + scene)
     let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/groups/1/action"

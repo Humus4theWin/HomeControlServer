@@ -19,9 +19,9 @@ function VSX_CALLBACK(oldState, newState) {
 
     // subwoofer
     if(newState.power === true && new Date().getHours() < startTime)
-        hue.turnSub(true)
+       // hue.turnSub(true)
     else if(newState.power === false)
-        hue.turnSub(false)
+      //  hue.turnSub(false)
 
     // volume offset after 1s
     if(newState.input){
@@ -94,7 +94,7 @@ setInterval(() => {
 
         // turn sub off routine
         if(now.getHours()==startTime && now.getMinutes()<=changeIntervall)  //first 
-            hue.turnSub(false);
+          //  hue.turnSub(false);
 
             // decrease Volume routine
             if(state.volume - vsx.getInputOffset(state.input)>targetVolume    // volume to loud

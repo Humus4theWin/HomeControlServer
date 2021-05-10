@@ -7,28 +7,30 @@
         <h3> {{ group }}: {{ beautifyText( group, vsx[group].value ) }}</h3>
 
         <div class="container">
-            <select-btn
-                v-if="group!='volume'"
-                v-for="value in vsx[group].range"
-                v-bind:class="value==vsx[group].value?'selected':''"
-                v-bind:name= 'group'
-                v-bind:text= 'beautifyText( group, value )'
-                v-bind:value= 'value'
-                v-bind:key="group.id"
-                v-on:change-request="postData"
-                > 
-
-            </select-btn>
-
             <input
-                v-if="group=='volume'"
+                v-if="group==='volume'"
                 type="range" 
-                v-bind:min="vsx[group].range[0]" 
-                v-bind:max="vsx[group].range[ vsx[group].range.length -1 ]" 
+                v-bind:min="minAudio" 
+                v-bind:max="maxAudio" 
                 v-model:value ="vsx[group].value"
                 v-on:change= "postData('volume',vsx[group].value)"
                 step="1"
             ></input">
+
+            <select-btn
+                v-else
+                v-for="value in vsx[group].range"
+                v-bind:class="value==vsx[group].value?'selected':''"
+                :name= 'group'
+                :text= 'beautifyText( group, value )'
+                :value= 'value'
+                :key="group.id"
+                @change-request="postData"
+                > 
+
+            </select-btn>
+
+           
         </div>
     </div>
 </div>
@@ -38,10 +40,25 @@
     var app = new Vue({
         el: '#app',
         data: {
-            vsx: {}
+            vsx: {} //{"power":{"value":true,"range":[true,false]},"volume":{"value":119,"range":[20,40,60,80,100,120]},"input":{"value":"PC","range":["Chromecast","Dock","BT","PC","TV","PS3","PS4","SPOTIFY"]},"mcacc":{"value":1,"range":[1,2,3,4,5,6]}}
         },
         created (){
             this.getData()
+        },
+        computed: {
+            maxAudio: function(){
+                return this.vsx.volume.range[ this.vsx.volume.range.length -1 ]
+
+            },
+            minAudio: function(){
+                return this.vsx.volume.range[0]
+
+            }
+        },
+        watch:{
+            vsx: function(val){
+                console.log("state has changed")
+            }
         },
         methods: {
             getData(){
@@ -74,12 +91,13 @@
                     return value
                 }
             }
-        }
+        },
     })
 
     Vue.component('select-btn', {
         props: ['name','value','text'],
-        template: '<button v-on:click="$emit(\'change-request\', name, value)"> {{ text }} </button>'
+        template: '<button \
+        v-on:click="$emit(\'change-request\', name, value)"> {{ text }} </button>'
     })
 
  
