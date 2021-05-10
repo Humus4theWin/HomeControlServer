@@ -165,7 +165,9 @@ app.get('/PC_Display_off', (req, res) => {
             mcacc: 2,
         })
         let hour = new Date().getHours();
-        hue.turnLightsOn(hour<6||hour>20?"Dark":"Hell")
+        hue.turnLightsOn(hour<6||hour>20?"err":"Hell")
+
+        hue.turnVent(false)
 
     res.send('ok')
 })
@@ -175,7 +177,7 @@ app.get('/PC_Display_on', (req, res) => {
     })
 
     let hour = new Date().getHours();
-    hue.turnLightsOn(hour>6&&hour<20?"Konzentrieren":"ChillPC")
+    hue.turnLightsOn(hour>6&&hour<21?"Konzentrieren":"Dark")
 
     res.send('ok')
 })
