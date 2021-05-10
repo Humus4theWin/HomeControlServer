@@ -18,9 +18,9 @@ let restTimeAfterManualShift = 20 * 60 *1000; //20 minutes
 function VSX_CALLBACK(oldState, newState) {
 
     // subwoofer
-    if(newState.power === true && new Date().getHours() < startTime)
+   // if(newState.power === true && new Date().getHours() < startTime)
        // hue.turnSub(true)
-    else if(newState.power === false)
+  //  else if(newState.power === false)
       //  hue.turnSub(false)
 
     // volume offset after 1s
