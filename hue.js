@@ -76,10 +76,23 @@ exports.turnSub = (powerState) => {
     axios.put(SWURL, {"on":powerState})
 }
 
-exports.turnVent = (powerState) => {  
+exports.turnFan = (powerState) => {  
     console.log("HUE SW: "+ powerState)
     let SWURL =  "http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/lights/30/state"
     axios.put(SWURL, {"on":powerState})
+}
+
+exports.toogleFan = function(){
+    axios.get('http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/lights/30/')
+    .then(r => 
+        axios.put("http://192.168.188.116/api/kYibW7kfMgNcVO8aOVU6-WhgDvk1JR7bWnwuagdb/lights/30/state", {"on": !r.data.state.on})
+        )
+
+
+
+
+
+  //  console.log("HUE SW: "+ powerState)
 }
 
 

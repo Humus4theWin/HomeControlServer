@@ -51,7 +51,6 @@ vsx.registerCallback(VSX_CALLBACK);
 vsx.start();
 
 
-
 // TV
 let TV_CALLBACKS = {
     onYoutubeOn: function(){
@@ -60,7 +59,7 @@ let TV_CALLBACKS = {
            input: 'TV',
            mcacc:3,
        })
-       hue.turnLightsOn("ChillPC")
+      // hue.turnLightsOn("ChillPC")
     },
 
     onNetflixOn: function(){
@@ -69,7 +68,7 @@ let TV_CALLBACKS = {
             input: 'TV',
             mcacc:3,
         })
-        hue.turnLightsOn("ChillPC")
+        //hue.turnLightsOn("ChillPC")
     },
 }
 tv.registerCallbacks(TV_CALLBACKS)
@@ -167,7 +166,7 @@ app.get('/PC_Display_off', (req, res) => {
         let hour = new Date().getHours();
         hue.turnLightsOn(hour<6||hour>20?"err":"Hell")
 
-        hue.turnVent(false)
+        hue.turnFan(false)
 
     res.send('ok')
 })
@@ -201,6 +200,12 @@ app.get('/vsx', function(req, res){
   app.get('/', function(req, res){      //vue
     res.sendFile('Frontend/main.html',{root: __dirname })
   });
+
+  app.get('/toggle_fan', (req, res) => {
+  hue.toogleFan()
+
+    res.send('ok')
+})
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
