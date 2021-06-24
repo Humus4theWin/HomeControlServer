@@ -7,29 +7,16 @@
         <h3> {{ group }}: {{ beautifyText( group, vsx[group].value ) }}</h3>
 
         <div class="container">
-            <input
-                v-if="group==='volume'"
-                type="range" 
-                v-bind:min="minAudio" 
-                v-bind:max="maxAudio" 
-                v-model:value ="vsx[group].value"
-                v-on:change= "postData('volume',vsx[group].value)"
-                step="1"
-            ></input">
+            <input v-if="group==='volume'" type="range" v-bind:min="minAudio" v-bind:max="maxAudio"
+                v-model:value="vsx[group].value" v-on:change="postData('volume',vsx[group].value)" step="1"></input">
 
-            <select-btn
-                v-else
-                v-for="value in vsx[group].range"
-                v-bind:class="value==vsx[group].value?'selected':''"
-                :name= 'group'
-                :text= 'beautifyText( group, value )'
-                :value= 'value'
-                :key="group.id"
-                @change-request="postData"
-                > 
+            <input v-else-if="group==='subwoofer'" type="range" v-bind:min="26" v-bind:max="74"
+                v-model:value="vsx[group].value" v-on:change="postData('subwoofer',vsx[group].value)" step="1"></input">
+
+            <select-btn v-else v-for="value in vsx[group].range" v-bind:class="value==vsx[group].value?'selected':''"
+                :name='group' :text='beautifyText( group, value )' :value='value' :key="group.id"
+                @change-request="postData">
             </select-btn>
-
-           
         </div>
     </div>
 </div>
@@ -41,35 +28,36 @@
         data: {
             vsx: {} //{"power":{"value":true,"range":[true,false]},"volume":{"value":119,"range":[20,40,60,80,100,120]},"input":{"value":"PC","range":["Chromecast","Dock","BT","PC","TV","PS3","PS4","SPOTIFY"]},"mcacc":{"value":1,"range":[1,2,3,4,5,6]}}
         },
-        created (){
+        created() {
             this.getData()
         },
         computed: {
-            maxAudio: function(){
-                return this.vsx.volume.range[ this.vsx.volume.range.length -1 ]
+            maxAudio: function () {
+                return this.vsx.volume.range[this.vsx.volume.range.length - 1]
 
             },
-            minAudio: function(){
+            minAudio: function () {
                 return this.vsx.volume.range[0]
 
-            }
+            },
+
         },
-        watch:{
-            vsx: function(val){
+        watch: {
+            vsx: function (val) {
                 console.log("state has changed")
             }
         },
         methods: {
-            getData(){
-                fetch('http://192.168.188.67:81/vsx')
-                .then(response => response.json())
-                .then( json => this.vsx = json)
+            getData() {
+                fetch('/vsx')
+                    .then(response => response.json())
+                    .then(json => this.vsx = json)
             },
-            postData(key,value){
+            postData(key, value) {
                 newState = {}
                 newState[key] = value
                 console.log(newState)
-                fetch('http://192.168.188.67:81/vsx',{
+                fetch('/vsx', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json, text/plain, */*',
@@ -78,28 +66,30 @@
                     body: JSON.stringify(newState)
                 }).then(res => res.json()).then(json => this.vsx = json);
             },
-            beautifyText(type, value){
-                switch(type){
-                case "volume":
-                    return ((value/2) - 80) + "db"
-                case "mcacc": 
-                    return value
-                case "power":
-                    return value?"AN":"AUS"
-                case "input": 
-                    return value
+            beautifyText(type, value) {
+                switch (type) {
+                    case "volume":
+                        return ((value / 2) - 80) + "db"
+                    case "mcacc":
+                        return value
+                    case "power":
+                        return value ? "AN" : "AUS"
+                    case "input":
+                        return value
+                    case "subwoofer":
+                        return (((value - 26) / 2) - 12) + "db"
                 }
             }
         },
     })
 
     Vue.component('select-btn', {
-        props: ['name','value','text'],
+        props: ['name', 'value', 'text'],
         template: '<button \
         v-on:click="$emit(\'change-request\', name, value)"> {{ text }} </button>'
     })
 
- 
+
 
 </script>
 
@@ -108,14 +98,15 @@
     h3 {
         font-size: 5em;
         background-color: lightgray;
-    
+
     }
+
     .container {
-        display:flex;
+        display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
     }
-    
+
     button {
         width: 30%;
         min-height: 4em;
@@ -123,14 +114,14 @@
         margin: 1em 0.2em;
         font-size: 3em
     }
+
     .selected {
         background-color: gray;
     }
+
     input {
         width: 100%;
         min-height: 20em;
-    
+
     }
-    
-    </style>
-    
+</style>
