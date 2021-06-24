@@ -178,6 +178,7 @@ let reqData = function () {
     client.write("?V\r");
     client.write("?F\r");
     client.write("?MC\r");
+    client.write("?SW_CLV\r");
 }
 
 let writeData = function (line) {
