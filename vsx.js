@@ -79,6 +79,7 @@ var state = {
         value: undefined,
         switch: async function (newState) {
             writeData(state.input.range[newState.input] + "FN");
+            client.write("?SW_CLV\r");
         },
         check: function (line) {
             if (line.startsWith("FN")) {
