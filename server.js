@@ -154,6 +154,7 @@ app.get('/sound_bett', (req, res) => {
     vsx.assureState({
         power: true,
         mcacc: 4,
+        input: "BT"
     })
 
     res.redirect("/");      // todo: test
