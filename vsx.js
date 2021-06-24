@@ -79,7 +79,7 @@ var state = {
         value: undefined,
         switch: async function (newState) {
             writeData(state.input.range[newState.input] + "FN");
-            client.write("?SW_CLV\r");
+        
         },
         check: function (line) {
             if (line.startsWith("FN")) {
@@ -93,6 +93,8 @@ var state = {
         value: undefined,
         switch: async function (newState) {
             writeData(newState.mcacc + "MC");
+            client.write("CRT\r");      // close display
+            client.write("?SW_CLV\r");   // get subwoofer level
         },
         check: function (line) {
             if (line.startsWith("MC")) {
