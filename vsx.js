@@ -105,8 +105,8 @@ var state = {
         },
     },
     soundSource:{
-        range: [2,3]
-    },
+        range: [2,3],
+   
      value: undefined,
     switch: async function (newState) {
         writeData(newState.soundSource + "SDA");
@@ -117,6 +117,7 @@ var state = {
         } else return false;
         return true;
     },
+},
 }
 
 

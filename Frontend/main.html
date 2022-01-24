@@ -78,6 +78,8 @@
                         return value
                     case "subwoofer":
                         return (((value - 26) / 2) - 12) + "db"
+                        case "soundSource":
+                        return value==2?"BT":"HDMI"
                 }
             }
         },
