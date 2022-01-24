@@ -103,7 +103,20 @@ var state = {
             } else return false;
             return true;
         },
-    }
+    },
+    soundSource:{
+        range: [2,3]
+    },
+     value: undefined,
+    switch: async function (newState) {
+        writeData(newState.soundSource + "SDA");
+    },
+    check: function (line) {
+        if (line.startsWith("SDA")) {
+            state.soundSource.value = Number(line.substr(3, 1))
+        } else return false;
+        return true;
+    },
 }
 
 
