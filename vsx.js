@@ -67,15 +67,15 @@ var state = {
     },
     input: {
         range: {
-            Chromecast: "21",
-            Dock: "25",
-            BT: "15",
-            PC: "01",
+      //      Chromecast: "21",
+     //       Dock: "25",
+            BT: "01",
+            PC: "15",
             TV: "05",
             PS3: "06",
             PS4: "04",
-            PI:"23",
-            SPOTIFY: "44",
+    //        PI:"23",
+    //       SPOTIFY: "44",
         },
         value: undefined,
         switch: async function (newState) {
@@ -263,7 +263,7 @@ exports.start = () => {
 exports.getInputOffset = (device) => {
     let devices = {
         PC: 25,
-        BT: 30,
+        BT: 40,
         TV: 30,
     }
     let offset = devices[device]
